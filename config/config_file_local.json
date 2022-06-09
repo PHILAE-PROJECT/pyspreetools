@@ -1,0 +1,8 @@
+{
+  "base_url": "https://demo.spreecommerce.org/",
+  "logging":true,
+  "log_file":"./logs/log.json" ,
+  "test_mode":true ,
+  "verbose": false,
+  "sleep_time": 0.2
+}
