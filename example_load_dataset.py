@@ -1,7 +1,7 @@
 import json
 import agilkia
 from pyspreetools.dataset2agilkia import read_traces_dictionary
-f = open('../pyspreetools/data/spree_5000_sessions_wo_responses.json')
+f = open('pyspreetools/data/spree_5000_sessions_wo_responses.json')
 data = json.load(f)
 f.close()
 traceset = read_traces_dictionary(data)
