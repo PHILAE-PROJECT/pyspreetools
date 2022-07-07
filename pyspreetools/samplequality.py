@@ -2,15 +2,15 @@ from .replay.replayer import OneTraceExecutor
 from .replay.pyspree.SpreeAPIManager import SpreeAPIManager
 from agilkia import TraceSet
 from tqdm import tqdm
-def executability(traceset_grouped,separative_token='|'):
+def executability(traceset_grouped,separative_token='|',base_url="https://demo.spreecommerce.org/"):
     errors = 0
     executed_sessions = 0
     error_keys = []
     config_dict = {
-        "base_url": "https://demo.spreecommerce.org/",
+        "base_url": base_url,
         "logging": False,
         "log_file": "./logs/log.json",
-        "test_mode": False,
+        "test_mode": True,
         "verbose": False,
         "sleep_time": 0.2
     }
@@ -27,19 +27,21 @@ def executability(traceset_grouped,separative_token='|'):
         raise ValueError("traceset_grouped should be an agilkia trace or a list of list")
 
     sam = SpreeAPIManager(config_dict=config_dict)
-    for seq in tqdm(list_of_traces,desc="Replaying of "+str(len(list_of_traces))+" traces..."):
+    executed_sessions_id=[]
+    for i,seq in tqdm(enumerate(list_of_traces),desc="Replaying of "+str(len(list_of_traces))+" traces..."):
         o = OneTraceExecutor()
         o.setUp(sam)
+        sam.new_session()
         o.SEQ = seq
         try:
             o.test_one_trace_as_test()
-            executed_sessions += 1
+            executed_sessions_id.append(i)
         except:
+            print("session #"+str(i)+"fails at being executed..")
+        # o.test_one_trace_as_test()
+        # executed_sessions_id.append(i)
 
-            error_keys.append(tr[0].meta_data.get('sessionID'))
-            errors += 1
-
-    return executed_sessions
+    return len(executed_sessions_id),executed_sessions_id
 
 
 if __name__ == '__main__':

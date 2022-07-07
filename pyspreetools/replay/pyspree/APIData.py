@@ -6,6 +6,7 @@ import string
 
 class APIData:
     def __init__(self):
+        random.seed(randint(0, 9999))
         random_number = randint(0, 9999)
         letters = string.ascii_lowercase
         random_letters = ''.join(random.choice(letters) for i in range(10))

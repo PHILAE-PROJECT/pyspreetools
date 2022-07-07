@@ -50,7 +50,7 @@ class OneTraceExecutor(unittest.TestCase):
         elif action =='updateCheckout_UpdatePaymentMethod':
             self._exec_updateCheckout_UpdatePaymentMethod(res)
         elif action =='updateCheckout_UpdateShippingInformation':
-            self._exec_updateCheckout_UpdateShippingInformationres(res)
+            self._exec_updateCheckout_UpdateShippingInformation(res)
         elif action =='nextCheckoutStep':
             self._exec_nextCheckoutStep(res)
         elif action =='createAnAccount':
@@ -73,6 +73,8 @@ class OneTraceExecutor(unittest.TestCase):
             self._exec_retrieveACart(res)
         elif action =='setLineItemQuantity':
             self._exec_setLineItemQuantity(res)
+        elif action=="retrieveAnOrder":
+            self._exec_retrieveAnOrder(res)
         else:
             print("Unknown operation:"+str(action))
             sys.exit(-1)
@@ -99,7 +101,7 @@ class OneTraceExecutor(unittest.TestCase):
         self.assertEqual(int(res), r.status_code)
 
     def _exec_associateACartWithAUser(self,res):
-        r=self.sam.associate_a_cart_with_a_user(res)
+        r=self.sam.associate_a_cart_with_a_user()
         self.assertEqual(int(res), r.status_code)
 
     def _exec_advanceCheckout(self,res):
@@ -124,7 +126,7 @@ class OneTraceExecutor(unittest.TestCase):
         self.assertEqual(int(res), r.status_code)
 
     def _exec_createAnAccount(self,res):
-        r=self.sam.createAnAccount()
+        r=self.sam.create_an_account()
         self.assertEqual(int(res), r.status_code)
 
     def _exec_createAnAddress(self,res):
@@ -187,20 +189,24 @@ class OneTraceExecutor(unittest.TestCase):
         self.id_to_modify=None
 
     def _exec_listShippingRates(self, res):
-        r=self.list_shipping_rates()
+        r=self.sam.list_shipping_rates()
         self.assertEqual(int(res), r.status_code)
 
     def _exec_updateCheckout_UpdateEmailInformation(self, res):
-        r=self.update_checkout(information_to_update="email")
+        r=self.sam.update_checkout(information_to_update="email")
         self.assertEqual(int(res), r.status_code)
 
     def _exec_updateCheckout_UpdatePaymentMethod(self, res):
-        r=self.update_checkout(information_to_update='payments_attributes')
+        r=self.sam.update_checkout(information_to_update='payments_attributes')
         self.assertEqual(int(res), r.status_code)
     def _exec_updateCheckout_UpdateShippingInformation(self, res):
-        r=self.update_checkout(information_to_update="ship_address_attributes")
+        r=self.sam.update_checkout(information_to_update="ship_address_attributes")
         self.assertEqual(int(res), r.status_code)
+    def _exec_retrieveAnOrder(self,res):
 
+        order_number = self.sam.list_all_orders().json()['data'][0]['attributes']['number']
+        r=self.sam.retrieve_an_order(order_number)
+        self.assertEqual(int(res), r.status_code)
     def test_one_trace_as_test(self):
 
         for i_row,row in enumerate(self.SEQ):
@@ -214,7 +220,7 @@ class OneTraceExecutor(unittest.TestCase):
                 print(str(row)+" (line "+str(i_row)+")")
                 sys.exit(-1)
 
-
+            # self.process(op,res)
 
 
 
