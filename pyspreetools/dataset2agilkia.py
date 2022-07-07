@@ -9,8 +9,18 @@ import datetime
 # data = json.load(f)
 # f.close()
 
+def read_raw_logs(filepath):
 
-def read_traces_dictionary(data, sep='|') -> agilkia.TraceSet:
+
+    data = {}
+    with open(filepath) as f:
+        for i,line in enumerate(f):
+            if i==0:
+                continue
+            data[i]=(json.loads(line))
+    return data
+
+def read_traces_dictionary(data,with_responses=False, sep='|') -> agilkia.TraceSet:
     # print("now=", datetime.now().timestamp())
 
     trace1 = agilkia.Trace([])
@@ -36,6 +46,8 @@ def read_traces_dictionary(data, sep='|') -> agilkia.TraceSet:
             inputs['body'] = session['body']
         except:
             inputs['body'] = {}
+
+
         others = {
             'timestamp': timestamp,
             'sessionID': sessionID,
@@ -45,6 +57,12 @@ def read_traces_dictionary(data, sep='|') -> agilkia.TraceSet:
         action = action_name + sep + status_code
 
         outputs = {"Status": status_code}
+        outputs['responses']={}
+        if with_responses:
+            try:
+                outputs['responses']=session['responses']
+            except:
+                pass
         event = agilkia.Event(action, inputs, outputs, others)
         trace1.append(event)
     traceset = agilkia.TraceSet([])
